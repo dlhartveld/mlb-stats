@@ -18,6 +18,8 @@
 		<version.dep.apache.commons-lang>2.6</version.dep.apache.commons-lang>
 		<version.dep.apache.commons-lang3>3.1</version.dep.apache.commons-lang3>
 		<version.dep.apache.httpclient>4.2.3</version.dep.apache.httpclient>
+		<version.dep.jdom2>2.0.4</version.dep.jdom2>
+		<version.dep.jaxen>1.1.4</version.dep.jaxen>
 		<version.dep.hartveld.rx-core>0.1-SNAPSHOT</version.dep.hartveld.rx-core>
 
 		<version.dep.junit>4.11</version.dep.junit>
@@ -74,6 +76,18 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>${version.dep.apache.httpclient}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
+			<version>${version.dep.jdom2}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>${version.dep.jaxen}</version>
 		</dependency>
 
 		<dependency>
