@@ -1,7 +1,7 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.client;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatters;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ public class GameDay {
 		final Element scoreboard = XmlUtils.findSingleElementInDocumentByXPath(document, "//scoreboard");
 		final Attribute scoreboardDateAttr = scoreboard.getAttribute("date");
 		final String scoreboardDateString = scoreboardDateAttr.getValue();
-		final LocalDate scoreboardDate = DateTimeFormatters.basicIsoDate().parse(scoreboardDateString, LocalDate::from);
+		final LocalDate scoreboardDate = DateTimeFormatter.BASIC_ISO_DATE.parse(scoreboardDateString, LocalDate::from);
 
 		if (!scoreboardDate.equals(date)) {
 			throw new RuntimeException("Retrieved data does not correspond with expected date");
