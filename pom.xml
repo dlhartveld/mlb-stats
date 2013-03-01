@@ -32,6 +32,7 @@
 		<version.plugin.javadoc>2.9</version.plugin.javadoc>
 		<version.plugin.site>3.2</version.plugin.site>
 		<version.plugin.project-info-reports>2.6</version.plugin.project-info-reports>
+		<version.plugin.codehaus.exec>1.2.1</version.plugin.codehaus.exec>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -202,6 +203,15 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${version.plugin.site}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${version.plugin.codehaus.exec}</version>
+				<configuration>
+					<mainClass>com.hartveld.rx.examples.mlb.stats.app.StatsApp</mainClass>
+				</configuration>
 			</plugin>
 
 		</plugins>

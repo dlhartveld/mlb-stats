@@ -22,11 +22,15 @@ public class RetrieveStatsTest {
 
 		final Observable<GameDay> gameDay = client.retrieve(date);
 
-		final Observable<Game> games = gameDay.flatMap((GameDay gd, Consumer<Game> sink) -> gd.getGames().forEach(sink));
+		final Observable<Game> games = gameDay.flatMap(
+				(GameDay gd, Consumer<Game> sink) -> gd.getGames().forEach(sink)
+		);
+
 		games.subscribe(
 				g -> LOG.info("Game: {}", g),
 				e -> LOG.error("Something went wrong: {}", e.getMessage(), e),
-				() -> LOG.info("Done.")).close();
+				() -> LOG.info("Done.")
+		).close();
 	}
 
 }

@@ -3,6 +3,7 @@ package com.hartveld.stream.reactive.examples.mlb.stats.client;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.hartveld.stream.reactive.Observable;
+import com.hartveld.stream.reactive.ObservableFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,31 +22,18 @@ public class MLBStatsClient {
 	public Observable<GameDay> retrieve(final LocalDate date) {
 		LOG.debug("Retrieving GameDay data for date: {}", date);
 
-		final Observable<Document> document = retrieveDocument(date);
-
-		LOG.info("Document: {}", document);
-
-		return document.map(doc -> new GameDay(doc, date));
+		return ObservableFactory.observableOfTask(() -> {
+			LOG.trace("Retrieving document for date: {}", date);
+			return retrieveDocument(date);
+		}).map(doc -> new GameDay(doc, date));
 	}
 
-	private Observable<Document> retrieveDocument(final LocalDate date) {
+	private Document retrieveDocument(final LocalDate date) throws JDOMException, IOException {
 		LOG.debug("Retrieving data for date: {}", date);
 
 		checkNotNull(date, "date");
 
-		return (onNext, onError, onCompleted) -> {
-			final URL url = urlForDate(date);
-
-			try {
-				onNext.accept(builder.build(url));
-				onCompleted.run();
-			} catch (JDOMException | IOException e) {
-				onError.accept(e);
-			}
-
-			return () -> { };
-		};
-
+		return builder.build(urlForDate(date));
 	}
 
 	private URL urlForDate(final LocalDate date) {
