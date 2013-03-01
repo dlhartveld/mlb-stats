@@ -3,10 +3,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.hartveld.rx.examples.mlb.stats</groupId>
+	<groupId>com.hartveld.stream.reactive.examples.mlb.stats</groupId>
 	<artifactId>mlb-stats</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<name>Hartveld.COM - Reactive Stream - Examples - MLB Stats App</name>
 
 	<properties>
 		<version.java>1.8</version.java>
@@ -20,7 +20,7 @@
 		<version.dep.apache.httpclient>4.2.3</version.dep.apache.httpclient>
 		<version.dep.jdom2>2.0.4</version.dep.jdom2>
 		<version.dep.jaxen>1.1.4</version.dep.jaxen>
-		<version.dep.hartveld.rx-core>0.1-SNAPSHOT</version.dep.hartveld.rx-core>
+		<version.dep.hartveld.stream.reactive>0.1-SNAPSHOT</version.dep.hartveld.stream.reactive>
 
 		<version.dep.junit>4.11</version.dep.junit>
 		<version.dep.hamcrest>1.3</version.dep.hamcrest>
@@ -91,9 +91,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.hartveld.rx</groupId>
-			<artifactId>rx-core</artifactId>
-			<version>${version.dep.hartveld.rx-core}</version>
+			<groupId>com.hartveld.stream.reactive</groupId>
+			<artifactId>reactive-stream</artifactId>
+			<version>${version.dep.hartveld.stream.reactive}</version>
 		</dependency>
 
 		<dependency>

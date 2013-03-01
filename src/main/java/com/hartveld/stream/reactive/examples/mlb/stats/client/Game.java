@@ -1,4 +1,4 @@
-package com.hartveld.rx.examples.mlb.stats.client;
+package com.hartveld.stream.reactive.examples.mlb.stats.client;
 
 import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;

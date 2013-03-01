@@ -1,8 +1,8 @@
-package com.hartveld.rx.examples.mlb.stats.client;
+package com.hartveld.stream.reactive.examples.mlb.stats.client;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.hartveld.rx.Observable;
+import com.hartveld.stream.reactive.Observable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
