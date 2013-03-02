@@ -1,10 +1,13 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import com.hartveld.stream.reactive.concurrency.Schedulers;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.GameDay;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
+import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -39,12 +42,12 @@ public class StatsApp {
 	private void onLoadRequest(final String s, final AppFrame appFrame) {
 		LOG.trace("Request for date: {}", s);
 
-		appFrame.disableLoadButton();
-		appFrame.clearGames();
-		appFrame.startProgressBar();
+		prepareForDataRetrieval();
 
 		client.retrieve(LocalDate.parse(s))
-				.flatMap(gd -> gd.getGames().stream())
+				.flatMap((GameDay gd, Consumer<Game> sink) -> {
+					gd.getGames().forEach(sink);
+				})
 				.observeOn(Schedulers.EDT)
 				.subscribeOn(Schedulers.DEFAULT)
 				.subscribe(
@@ -54,14 +57,10 @@ public class StatsApp {
 					},
 					ex -> {
 						LOG.error("Error: {}", ex.getMessage(), ex);
-						appFrame.stopProgressBar();
-						appFrame.pack();
-						appFrame.enableLoadButton();
+						finishUpAfterDataRetrieval();
 					},
 					() -> {
-						appFrame.stopProgressBar();
-						appFrame.pack();
-						appFrame.enableLoadButton();
+						finishUpAfterDataRetrieval();
 					}
 				);
 	}
@@ -110,6 +109,18 @@ public class StatsApp {
 
 		StatsApp app = new StatsApp();
 		app.run();
+	}
+
+	private void prepareForDataRetrieval() {
+		appFrame.disableLoadButton();
+		appFrame.clearGames();
+		appFrame.startProgressBar();
+	}
+
+	private void finishUpAfterDataRetrieval() {
+		appFrame.stopProgressBar();
+		appFrame.pack();
+		appFrame.enableLoadButton();
 	}
 
 }
