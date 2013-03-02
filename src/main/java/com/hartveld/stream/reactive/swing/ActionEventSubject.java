@@ -1,4 +1,4 @@
-package com.hartveld.stream.reactive.examples.mlb.stats.app;
+package com.hartveld.stream.reactive.swing;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,12 +36,13 @@ public class ActionEventSubject extends BasicSubject<ActionEvent, ActionListener
 	}
 
 	@Override
-	protected void onClose(final ActionListener source) {
-		LOG.trace("onClose(): {}", source);
+	protected void onClose(final ActionListener listener) {
+		LOG.trace("onClose(): {}", listener);
 
-		checkNotNull(source, "source");
+		checkNotNull(listener, "source");
 
-		this.button.removeActionListener(source);
+		LOG.trace("Removing action listener: {}", listener);
+		this.button.removeActionListener(listener);
 	}
 
 }

@@ -210,7 +210,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>${version.plugin.codehaus.exec}</version>
 				<configuration>
-					<mainClass>com.hartveld.rx.examples.mlb.stats.app.StatsApp</mainClass>
+					<mainClass>com.hartveld.stream.reactive.examples.mlb.stats.app.StatsApp</mainClass>
 				</configuration>
 			</plugin>
 

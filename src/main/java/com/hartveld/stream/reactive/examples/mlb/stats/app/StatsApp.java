@@ -15,10 +15,73 @@ public class StatsApp {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StatsApp.class);
 
-	private static final AppFrame appFrame = new AppFrame();
-	private static final MLBStatsClient client = new MLBStatsClient();
+	private final AppFrame appFrame = new AppFrame();
+	private final MLBStatsClient client = new MLBStatsClient();
 
-	public static void main(String args[]) {
+	public void run() {
+		try {
+			SwingUtilities.invokeAndWait(() -> {
+				appFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+				final AutoCloseable subscription = appFrame.loadRequests.subscribe(s -> onLoadRequest(s, appFrame));
+				appFrame.events.window.closing.subscribe(e -> onWindowClosing(e, subscription));
+
+				appFrame.setVisible(true);
+			});
+		} catch (InterruptedException ex) {
+			LOG.error("Interrupted while setting up app: {}", ex.getMessage(), ex);
+		} catch (InvocationTargetException ex) {
+			LOG.error("Exception while setting up app: {}", ex.getMessage(), ex);
+		}
+
+	}
+
+	private void onLoadRequest(final String s, final AppFrame appFrame) {
+		LOG.trace("Request for date: {}", s);
+
+		appFrame.disableLoadButton();
+		appFrame.clearGames();
+
+		client.retrieve(LocalDate.parse(s))
+				.flatMap(gd -> gd.getGames().stream())
+				.observeOn(Schedulers.EDT)
+				.subscribeOn(Schedulers.DEFAULT)
+				.subscribe(
+					el -> {
+						LOG.info("Got: {}", el);
+						appFrame.addGame(el);
+					},
+					ex -> {
+						LOG.error("Error: {}", ex.getMessage(), ex);
+						appFrame.pack();
+						appFrame.enableLoadButton();
+					},
+					() -> {
+						appFrame.pack();
+						appFrame.enableLoadButton();
+					}
+				);
+	}
+
+	private void onWindowClosing(final WindowEvent e, final AutoCloseable subscription) {
+		try {
+			subscription.close();
+		} catch (Exception ex) {
+			LOG.error("Unsubscribe failed: {}", ex.getMessage(), ex);
+		}
+
+		final Timer timer = new Timer(1000, ev -> {
+			LOG.info("Exiting app ...");
+			System.exit(0);
+		});
+		timer.setRepeats(true);
+
+		LOG.info("Waiting a little while for app to spin down ...");
+		timer.start();
+	}
+
+	public static void main(String [] args) {
+
 		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /*
 		 * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -42,61 +105,8 @@ public class StatsApp {
 		}
 		//</editor-fold>
 
-		try {
-			SwingUtilities.invokeAndWait(() -> {
-				appFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
-				final AutoCloseable subscription = appFrame.loadRequests.subscribe(s -> onLoadRequest(s, appFrame));
-				appFrame.windowClosingEvents.subscribe(e -> onWindowClosing(e, subscription));
-
-				appFrame.setVisible(true);
-			});
-		} catch (InterruptedException ex) {
-			LOG.error("Interrupted while setting up app: {}", ex.getMessage(), ex);
-		} catch (InvocationTargetException ex) {
-			LOG.error("Exception while setting up app: {}", ex.getMessage(), ex);
-		}
-
-	}
-
-	private static void onLoadRequest(final String s, final AppFrame appFrame) {
-		LOG.trace("Request for date: {}", s);
-
-		appFrame.disableLoadButton();
-
-		client.retrieve(LocalDate.parse(s))
-				.flatMap(gd -> gd.getGames().stream())
-				.observeOn(Schedulers.EDT)
-				.subscribeOn(Schedulers.DEFAULT)
-				.subscribe(
-					el -> {
-						LOG.info("Got: {}", el);
-					},
-					ex -> {
-						LOG.error("Error: {}", ex.getMessage(), ex);
-						appFrame.enableLoadButton();
-					},
-					() -> {
-						appFrame.enableLoadButton();
-					}
-				);
-	}
-
-	private static void onWindowClosing(final WindowEvent e, final AutoCloseable subscription) {
-		try {
-			subscription.close();
-		} catch (Exception ex) {
-			LOG.error("Unsubscribe failed: {}", ex.getMessage(), ex);
-		}
-
-		final Timer timer = new Timer(1000, ev -> {
-			LOG.info("Exiting app ...");
-			System.exit(0);
-		});
-		timer.setRepeats(true);
-
-		LOG.info("Waiting a little while for app to spin down ...");
-		timer.start();
+		StatsApp app = new StatsApp();
+		app.run();
 	}
 
 }

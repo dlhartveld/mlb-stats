@@ -1,4 +1,4 @@
-package com.hartveld.stream.reactive.examples.mlb.stats.app;
+package com.hartveld.stream.reactive.swing;
 
 import com.hartveld.stream.reactive.subjects.BasicSubject;
 import java.util.EventListener;

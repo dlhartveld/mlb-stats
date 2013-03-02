@@ -1,4 +1,4 @@
-package com.hartveld.stream.reactive.examples.mlb.stats.app;
+package com.hartveld.stream.reactive.swing;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
