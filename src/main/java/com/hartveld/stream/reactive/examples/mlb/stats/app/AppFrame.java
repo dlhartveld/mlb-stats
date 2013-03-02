@@ -124,4 +124,12 @@ public class AppFrame extends JFrame {
 		this.boxScoreListModel.addGame(game);
 	}
 
+	void startProgressBar() {
+		this.progressBar.setIndeterminate(true);
+	}
+
+	void stopProgressBar() {
+		this.progressBar.setIndeterminate(false);
+	}
+
 }

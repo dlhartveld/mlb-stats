@@ -41,6 +41,7 @@ public class StatsApp {
 
 		appFrame.disableLoadButton();
 		appFrame.clearGames();
+		appFrame.startProgressBar();
 
 		client.retrieve(LocalDate.parse(s))
 				.flatMap(gd -> gd.getGames().stream())
@@ -53,10 +54,12 @@ public class StatsApp {
 					},
 					ex -> {
 						LOG.error("Error: {}", ex.getMessage(), ex);
+						appFrame.stopProgressBar();
 						appFrame.pack();
 						appFrame.enableLoadButton();
 					},
 					() -> {
+						appFrame.stopProgressBar();
 						appFrame.pack();
 						appFrame.enableLoadButton();
 					}
