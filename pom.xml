@@ -93,7 +93,7 @@
 
 		<dependency>
 			<groupId>com.hartveld.stream.reactive</groupId>
-			<artifactId>reactive-stream</artifactId>
+			<artifactId>reactive-stream-swing</artifactId>
 			<version>${version.dep.hartveld.stream.reactive}</version>
 		</dependency>
 

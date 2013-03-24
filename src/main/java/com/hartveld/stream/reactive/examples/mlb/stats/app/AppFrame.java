@@ -1,16 +1,14 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import com.hartveld.stream.reactive.Observable;
-import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
-import com.hartveld.stream.reactive.swing.JFrameEvents;
 import com.hartveld.stream.reactive.swing.ReactiveButton;
+import com.hartveld.stream.reactive.swing.ReactiveFrame;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -20,22 +18,21 @@ import javax.swing.text.DefaultFormatterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AppFrame extends JFrame {
+public class AppFrame extends ReactiveFrame {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppFrame.class);
 
 	private final JFormattedTextField dateInputField;
 	private final ReactiveButton loadButton;
+
 	private final JScrollPane boxScoreScrollPane;
 	private final JList<BoxScorePanel> boxScoreList;
+
 	private final JProgressBar progressBar;
 
 	public final Observable<String> loadRequests;
 
-	public final JFrameEvents events = new JFrameEvents(this);
-	protected BoxScorePanelListModel boxScoreListModel;
-
-	public AppFrame() {
+	public AppFrame(BoxScorePanelListModel boxScorePanelListModel) {
 		super("Stats App");
 
 		final DateFormatter dateFormatter = new DateFormatter(new SimpleDateFormat("yyyy-MM-dd"));
@@ -50,8 +47,7 @@ public class AppFrame extends JFrame {
 
 		this.loadButton = new ReactiveButton("Load");
 
-		this.boxScoreListModel = new BoxScorePanelListModel();
-		this.boxScoreList = new JList<>(boxScoreListModel);
+		this.boxScoreList = new JList<>(boxScorePanelListModel);
 		this.boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
 		this.boxScoreList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -62,6 +58,8 @@ public class AppFrame extends JFrame {
 
 		this.loadRequests = this.loadButton.events
 				.map(e -> dateInputField.getText());
+
+		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		layoutFrame();
 	}
@@ -111,17 +109,6 @@ public class AppFrame extends JFrame {
 
 	void enableLoadButton() {
 		this.loadButton.setEnabled(true);
-	}
-
-	void clearGames() {
-		LOG.info("Clearing games list ...");
-		this.boxScoreListModel.clear();
-	}
-
-	void addGame(final Game game) {
-		LOG.info("Adding game: {}", game);
-
-		this.boxScoreListModel.addGame(game);
 	}
 
 	void startProgressBar() {
