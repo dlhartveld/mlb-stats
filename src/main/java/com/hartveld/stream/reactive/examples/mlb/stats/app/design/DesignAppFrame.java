@@ -1,4 +1,4 @@
-package com.hartveld.stream.reactive.examples.mlb.stats.app;
+package com.hartveld.stream.reactive.examples.mlb.stats.app.design;
 
 @Deprecated
 public class DesignAppFrame extends javax.swing.JFrame {

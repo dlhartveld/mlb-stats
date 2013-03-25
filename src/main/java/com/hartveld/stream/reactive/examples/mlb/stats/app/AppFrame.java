@@ -1,15 +1,16 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import com.hartveld.stream.reactive.Observable;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
 import com.hartveld.stream.reactive.swing.ReactiveButton;
 import com.hartveld.stream.reactive.swing.ReactiveFrame;
+import com.hartveld.stream.reactive.swing.ReactiveList;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JFormattedTextField;
-import javax.swing.JList;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -26,11 +27,11 @@ public class AppFrame extends ReactiveFrame {
 	private final ReactiveButton loadButton;
 
 	private final JScrollPane boxScoreScrollPane;
-	private final JList<BoxScorePanel> boxScoreList;
 
 	private final JProgressBar progressBar;
 
 	public final Observable<String> loadRequests;
+	public final Observable<Game> gameSelection;
 
 	public AppFrame(BoxScorePanelListModel boxScorePanelListModel) {
 		super("Stats App");
@@ -47,15 +48,18 @@ public class AppFrame extends ReactiveFrame {
 
 		this.loadButton = new ReactiveButton("Load");
 
-		this.boxScoreList = new JList<>(boxScorePanelListModel);
-		this.boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
-		this.boxScoreList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		final ReactiveList<BoxScorePanel> boxScoreList = new ReactiveList<>(boxScorePanelListModel);
+		boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
+		boxScoreList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		this.boxScoreScrollPane = new JScrollPane(boxScoreList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		this.progressBar = new JProgressBar();
 
+		this.gameSelection = boxScoreList.selection
+				.filter(e -> !e.getValueIsAdjusting())
+				.map(e -> boxScorePanelListModel.getElementAt(e.getFirstIndex()).game);
 		this.loadRequests = this.loadButton.events
 				.map(e -> dateInputField.getText());
 

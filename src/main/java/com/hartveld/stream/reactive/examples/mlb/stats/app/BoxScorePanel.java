@@ -13,6 +13,8 @@ import javax.swing.SwingConstants;
 
 public class BoxScorePanel extends JPanel {
 
+	public final Game game;
+
 	private final JLabel awayTeamErrors;
     private final JLabel awayTeamHits;
     private final JLabel awayTeamName;
@@ -27,6 +29,8 @@ public class BoxScorePanel extends JPanel {
 
 	public BoxScorePanel(final Game game) {
 		checkNotNull(game, "game");
+
+		this.game = game;
 
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 

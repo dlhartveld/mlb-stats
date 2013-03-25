@@ -1,4 +1,4 @@
-package com.hartveld.stream.reactive.examples.mlb.stats.app;
+package com.hartveld.stream.reactive.examples.mlb.stats.app.design;
 
 public class DesignGameBoxScorePanel extends javax.swing.JPanel {
 

@@ -14,7 +14,11 @@ public class BoxScorePanelListModel extends AbstractListModel<BoxScorePanel> imp
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoxScorePanelListModel.class);
 
-	private final List<Game> games = new ArrayList<>();
+	private final List<Game> games;
+
+	public BoxScorePanelListModel() {
+		this.games = new ArrayList<>();
+	}
 
 	public void addGame(final Game game) {
 		LOG.info("Adding game: {}", game);

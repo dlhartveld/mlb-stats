@@ -1,5 +1,6 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
+import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
@@ -9,7 +10,7 @@ public class StatsApp {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StatsApp.class);
 
-	public static void main(String [] args) {
+	public static void main(String[] args) {
 		LOG.info("Starting ...");
 
 		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -35,12 +36,14 @@ public class StatsApp {
 		}
 		//</editor-fold>
 
+		final MLBStatsClient mlbStatsClient = new MLBStatsClient();
+		final BoxScorePanelListModel boxScorePanelListModel = new BoxScorePanelListModel();
+
 		try {
 			SwingUtilities.invokeAndWait(() -> {
-				final BoxScorePanelListModel boxScorePanelListModel = new BoxScorePanelListModel();
 				final AppFrame appFrame = new AppFrame(boxScorePanelListModel);
 
-				final AppFrameControl appFrameControl = new AppFrameControl(appFrame, boxScorePanelListModel);
+				final AppControl appFrameControl = new AppControl(appFrame, boxScorePanelListModel, mlbStatsClient);
 				appFrameControl.showGUI();
 			});
 		} catch (InterruptedException ex) {
