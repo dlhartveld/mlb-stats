@@ -12,12 +12,11 @@
 		<version.java>1.8</version.java>
 		<version.maven>3.0.4</version.maven>
 
-		<version.dep.slf4j>1.7.2</version.dep.slf4j>
-		<version.dep.logback>1.0.9</version.dep.logback>
-		<version.dep.guava>13.0.1</version.dep.guava>
+		<version.dep.slf4j>1.7.5</version.dep.slf4j>
+		<version.dep.logback>1.0.11</version.dep.logback>
+		<version.dep.guava>14.0.1</version.dep.guava>
 		<version.dep.apache.commons-lang>2.6</version.dep.apache.commons-lang>
 		<version.dep.apache.commons-lang3>3.1</version.dep.apache.commons-lang3>
-		<version.dep.apache.httpclient>4.2.3</version.dep.apache.httpclient>
 		<version.dep.jdom2>2.0.4</version.dep.jdom2>
 		<version.dep.jaxen>1.1.4</version.dep.jaxen>
 		<version.dep.hartveld.stream.reactive>0.1-SNAPSHOT</version.dep.hartveld.stream.reactive>
@@ -71,12 +70,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${version.dep.apache.commons-lang3}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${version.dep.apache.httpclient}</version>
 		</dependency>
 
 		<dependency>
