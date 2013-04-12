@@ -1,15 +1,16 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import com.hartveld.stream.reactive.Observable;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
 import com.hartveld.stream.reactive.swing.ReactiveButton;
 import com.hartveld.stream.reactive.swing.ReactiveFrame;
+import com.hartveld.stream.reactive.swing.ReactiveList;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JFormattedTextField;
-import javax.swing.JList;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -26,11 +27,12 @@ public class AppFrame extends ReactiveFrame {
 	private final ReactiveButton loadButton;
 
 	private final JScrollPane boxScoreScrollPane;
-	private final JList<BoxScorePanel> boxScoreList;
+	private final ReactiveList<BoxScorePanel> boxScoreList;
 
 	private final JProgressBar progressBar;
 
 	public final Observable<String> loadRequests;
+	public final Observable<Game> selection;
 
 	public AppFrame(BoxScorePanelListModel boxScorePanelListModel) {
 		super("Stats App");
@@ -47,7 +49,7 @@ public class AppFrame extends ReactiveFrame {
 
 		this.loadButton = new ReactiveButton("Load");
 
-		this.boxScoreList = new JList<>(boxScorePanelListModel);
+		this.boxScoreList = new ReactiveList<>(boxScorePanelListModel);
 		this.boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
 		this.boxScoreList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -58,6 +60,13 @@ public class AppFrame extends ReactiveFrame {
 
 		this.loadRequests = this.loadButton.events
 				.map(e -> dateInputField.getText());
+		this.selection = this.boxScoreList.selection
+				.filter(e -> !e.getValueIsAdjusting())
+				.map(s -> {
+					final ReactiveList list = (ReactiveList)s.getSource();
+					final BoxScorePanelListModel model = (BoxScorePanelListModel) list.getModel();
+					return model.getElementAt(s.getFirstIndex()).game;
+				});
 
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
