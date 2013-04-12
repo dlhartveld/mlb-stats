@@ -4,12 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.hartveld.stream.reactive.concurrency.Schedulers;
-import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
-import com.hartveld.stream.reactive.examples.mlb.stats.client.GameDay;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
-import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.slf4j.Logger;
@@ -54,9 +51,7 @@ public class AppFrameControl {
 		prepareForDataRetrieval();
 
 		client.retrieve(LocalDate.parse(s))
-				.flatMap((GameDay gd, Consumer<Game> sink) -> {
-					gd.getGames().forEach(sink);
-				})
+				.flatMap(gd -> gd.getGames().stream())
 				.observeOn(Schedulers.EDT)
 				.subscribeOn(Schedulers.DEFAULT)
 				.subscribe(boxScorePanelListModel::addGame, this::onError, this::finishUpAfterDataRetrieval);

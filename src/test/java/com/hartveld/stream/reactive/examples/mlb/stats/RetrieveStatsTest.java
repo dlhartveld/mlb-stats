@@ -6,7 +6,6 @@ import com.hartveld.stream.reactive.examples.mlb.stats.client.GameDay;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.function.Consumer;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +21,7 @@ public class RetrieveStatsTest {
 
 		final Observable<GameDay> gameDay = client.retrieve(date);
 
-		final Observable<Game> games = gameDay.flatMap(
-				(GameDay gd, Consumer<Game> sink) -> gd.getGames().forEach(sink)
-		);
+		final Observable<Game> games = gameDay.flatMap(gd -> gd.getGames().stream());
 
 		games.subscribe(
 				g -> LOG.info("Game: {}", g),
