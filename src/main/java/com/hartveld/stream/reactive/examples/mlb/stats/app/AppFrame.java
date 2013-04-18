@@ -1,18 +1,25 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
-import com.hartveld.stream.reactive.Observable;
+import com.hartveld.stream.reactive.component.ReactiveButton;
+import com.hartveld.stream.reactive.component.ReactiveList;
+import com.hartveld.stream.reactive.component.ReactiveListModel;
+import com.hartveld.stream.reactive.component.ReactiveProgressBar;
+import com.hartveld.stream.reactive.component.ReactiveTextField;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
 import com.hartveld.stream.reactive.swing.ReactiveSwingButton;
+import com.hartveld.stream.reactive.swing.ReactiveSwingFormattedTextField;
 import com.hartveld.stream.reactive.swing.ReactiveSwingFrame;
 import com.hartveld.stream.reactive.swing.ReactiveSwingList;
+import com.hartveld.stream.reactive.swing.ReactiveSwingProgressBar;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.GroupLayout;
-import javax.swing.JFormattedTextField;
-import javax.swing.JProgressBar;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.DateFormatter;
 import javax.swing.text.DefaultFormatterFactory;
@@ -23,23 +30,21 @@ public class AppFrame extends ReactiveSwingFrame {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppFrame.class);
 
-	private final JFormattedTextField dateInputField;
+	private final ReactiveSwingFormattedTextField dateInputField;
 	private final ReactiveSwingButton loadButton;
 
 	private final JScrollPane boxScoreScrollPane;
-	private final ReactiveSwingList<BoxScorePanel> boxScoreList;
+	private final ReactiveSwingList<Game> boxScoreList;
 
-	private final JProgressBar progressBar;
+	private final ReactiveSwingProgressBar progressBar;
 
-	public final Observable<String> loadRequests;
-	public final Observable<Game> selection;
-
-	public AppFrame(final BoxScorePanelListModel boxScorePanelListModel) {
+	public AppFrame(final ReactiveListModel<Game> boxScorePanelListModel) {
 		super("Stats App");
 
 		final DateFormatter dateFormatter = new DateFormatter(new SimpleDateFormat("yyyy-MM-dd"));
 
-		this.dateInputField = new JFormattedTextField();
+		this.dateInputField = new ReactiveSwingFormattedTextField();
+		this.dateInputField.setName("input");
 		this.dateInputField.setFormatterFactory(new DefaultFormatterFactory(dateFormatter));
 		try {
 			this.dateInputField.setText(dateFormatter.valueToString(new Date()));
@@ -48,6 +53,7 @@ public class AppFrame extends ReactiveSwingFrame {
 		}
 
 		this.loadButton = new ReactiveSwingButton("Load");
+		this.loadButton.setName("load");
 
 		this.boxScoreList = new ReactiveSwingList<>(boxScorePanelListModel);
 		this.boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
@@ -56,21 +62,27 @@ public class AppFrame extends ReactiveSwingFrame {
 		this.boxScoreScrollPane = new JScrollPane(boxScoreList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		this.progressBar = new JProgressBar();
-
-		this.loadRequests = this.loadButton.clicks()
-				.map(e -> dateInputField.getText());
-		this.selection = this.boxScoreList.selection
-				.filter(e -> !e.getValueIsAdjusting())
-				.map(s -> {
-					final ReactiveSwingList list = (ReactiveSwingList)s.getSource();
-					final BoxScorePanelListModel model = (BoxScorePanelListModel) list.getModel();
-					return model.getElementAt(s.getFirstIndex()).game;
-				});
+		this.progressBar = new ReactiveSwingProgressBar();
 
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		layoutFrame();
+	}
+
+	public ReactiveButton load() {
+		return this.loadButton;
+	}
+
+	public ReactiveTextField dateInput() {
+		return this.dateInputField;
+	}
+
+	public ReactiveList<Game> gameList() {
+		return this.boxScoreList;
+	}
+
+	public ReactiveProgressBar progressBar() {
+		return this.progressBar;
 	}
 
 	private void layoutFrame() {
@@ -112,20 +124,30 @@ public class AppFrame extends ReactiveSwingFrame {
 		this.pack();
 	}
 
-	void disableLoadButton() {
-		this.loadButton.setEnabled(false);
-	}
-
-	void enableLoadButton() {
-		this.loadButton.setEnabled(true);
-	}
-
+	@Deprecated
 	void startProgressBar() {
 		this.progressBar.setIndeterminate(true);
 	}
 
+	@Deprecated
 	void stopProgressBar() {
 		this.progressBar.setIndeterminate(false);
+	}
+
+	private static class BoxScorePanelListCellRender implements ListCellRenderer<Game> {
+
+		@Override
+		public Component getListCellRendererComponent(final JList<? extends Game> list, final Game value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+			final BoxScorePanel panel = new BoxScorePanel(value);
+
+			if (isSelected) {
+				panel.setBackground(list.getSelectionBackground());
+				panel.setForeground(list.getSelectionForeground());
+			}
+
+			return panel;
+		}
+
 	}
 
 }

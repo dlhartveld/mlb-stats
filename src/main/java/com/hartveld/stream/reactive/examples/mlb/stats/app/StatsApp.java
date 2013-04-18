@@ -1,7 +1,10 @@
 package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
-import java.lang.reflect.InvocationTargetException;
-import javax.swing.SwingUtilities;
+import com.hartveld.stream.reactive.component.ReactiveListModel;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
+import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
+import com.hartveld.stream.reactive.swing.DefaultReactiveListModel;
+import java.awt.EventQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +12,25 @@ public class StatsApp {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StatsApp.class);
 
-	public static void main(String [] args) {
+	private final MLBStatsClient service;
+	private final ReactiveListModel<Game> model;
+
+	private AppFrameControl appFrameControl;
+
+	StatsApp() throws Exception {
+		service = new MLBStatsClient();
+		model = new DefaultReactiveListModel<>();
+
+		EventQueue.invokeAndWait(() -> {
+			appFrameControl = new AppFrameControl(model, service);
+		});
+	}
+
+	void run() throws Exception {
+		appFrameControl.showFrame();
+	}
+
+	public static void main(String[] args) throws Exception {
 		LOG.info("Starting ...");
 
 		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -36,17 +57,12 @@ public class StatsApp {
 		//</editor-fold>
 
 		try {
-			SwingUtilities.invokeAndWait(() -> {
-				final BoxScorePanelListModel boxScorePanelListModel = new BoxScorePanelListModel();
-				final AppFrame appFrame = new AppFrame(boxScorePanelListModel);
-
-				final AppFrameControl appFrameControl = new AppFrameControl(appFrame, boxScorePanelListModel);
-				appFrameControl.showGUI();
-			});
-		} catch (InterruptedException ex) {
-			LOG.error("Interrupted while setting up app: {}", ex.getMessage(), ex);
-		} catch (InvocationTargetException ex) {
-			LOG.error("Exception while setting up app: {}", ex.getMessage(), ex);
+			StatsApp app = new StatsApp();
+			app.run();
+		} catch (Exception e) {
+			LOG.error("Something went terribly wrong: {}", e.getMessage(), e);
+			LOG.error("Exiting app ...");
+			System.exit(1);
 		}
 	}
 
