@@ -2,8 +2,9 @@ package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.hartveld.stream.reactive.concurrency.Schedulers.defaultScheduler;
+import static com.hartveld.stream.reactive.concurrency.Schedulers.eventQueueScheduler;
 
-import com.hartveld.stream.reactive.concurrency.Schedulers;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.MLBStatsClient;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
@@ -36,7 +37,7 @@ public class AppFrameControl {
 		checkState(SwingUtilities.isEventDispatchThread(), "Not on EDT");
 
 		final AutoCloseable subscription = appFrame.loadRequests.subscribe(s -> onLoadRequest(s, appFrame));
-		appFrame.window.closing.subscribe(e -> onWindowClosing(e, subscription));
+		appFrame.window().closing().subscribe(e -> onWindowClosing(e, subscription));
 
 		appFrame.setVisible(true);
 	}
@@ -52,9 +53,13 @@ public class AppFrameControl {
 
 		client.retrieve(LocalDate.parse(s))
 				.flatMap(gd -> gd.getGames().stream())
-				.observeOn(Schedulers.EDT)
-				.subscribeOn(Schedulers.DEFAULT)
-				.subscribe(boxScorePanelListModel::addGame, this::onError, this::finishUpAfterDataRetrieval);
+				.observeOn(eventQueueScheduler())
+				.subscribeOn(defaultScheduler())
+				.subscribe(
+						boxScorePanelListModel::addGame,
+						this::onError,
+						this::finishUpAfterDataRetrieval
+				);
 	}
 
 	private void prepareForDataRetrieval() {

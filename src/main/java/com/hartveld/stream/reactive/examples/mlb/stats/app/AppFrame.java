@@ -2,9 +2,9 @@ package com.hartveld.stream.reactive.examples.mlb.stats.app;
 
 import com.hartveld.stream.reactive.Observable;
 import com.hartveld.stream.reactive.examples.mlb.stats.client.Game;
-import com.hartveld.stream.reactive.swing.ReactiveButton;
-import com.hartveld.stream.reactive.swing.ReactiveFrame;
-import com.hartveld.stream.reactive.swing.ReactiveList;
+import com.hartveld.stream.reactive.swing.ReactiveSwingButton;
+import com.hartveld.stream.reactive.swing.ReactiveSwingFrame;
+import com.hartveld.stream.reactive.swing.ReactiveSwingList;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,22 +19,22 @@ import javax.swing.text.DefaultFormatterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AppFrame extends ReactiveFrame {
+public class AppFrame extends ReactiveSwingFrame {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppFrame.class);
 
 	private final JFormattedTextField dateInputField;
-	private final ReactiveButton loadButton;
+	private final ReactiveSwingButton loadButton;
 
 	private final JScrollPane boxScoreScrollPane;
-	private final ReactiveList<BoxScorePanel> boxScoreList;
+	private final ReactiveSwingList<BoxScorePanel> boxScoreList;
 
 	private final JProgressBar progressBar;
 
 	public final Observable<String> loadRequests;
 	public final Observable<Game> selection;
 
-	public AppFrame(BoxScorePanelListModel boxScorePanelListModel) {
+	public AppFrame(final BoxScorePanelListModel boxScorePanelListModel) {
 		super("Stats App");
 
 		final DateFormatter dateFormatter = new DateFormatter(new SimpleDateFormat("yyyy-MM-dd"));
@@ -47,9 +47,9 @@ public class AppFrame extends ReactiveFrame {
 			LOG.error("Failed to parse date: {}", ex.getMessage(), ex);
 		}
 
-		this.loadButton = new ReactiveButton("Load");
+		this.loadButton = new ReactiveSwingButton("Load");
 
-		this.boxScoreList = new ReactiveList<>(boxScorePanelListModel);
+		this.boxScoreList = new ReactiveSwingList<>(boxScorePanelListModel);
 		this.boxScoreList.setCellRenderer(new BoxScorePanelListCellRender());
 		this.boxScoreList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -58,12 +58,12 @@ public class AppFrame extends ReactiveFrame {
 
 		this.progressBar = new JProgressBar();
 
-		this.loadRequests = this.loadButton.events
+		this.loadRequests = this.loadButton.clicks()
 				.map(e -> dateInputField.getText());
 		this.selection = this.boxScoreList.selection
 				.filter(e -> !e.getValueIsAdjusting())
 				.map(s -> {
-					final ReactiveList list = (ReactiveList)s.getSource();
+					final ReactiveSwingList list = (ReactiveSwingList)s.getSource();
 					final BoxScorePanelListModel model = (BoxScorePanelListModel) list.getModel();
 					return model.getElementAt(s.getFirstIndex()).game;
 				});
