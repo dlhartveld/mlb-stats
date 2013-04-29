@@ -124,16 +124,6 @@ public class AppFrame extends ReactiveSwingFrame {
 		this.pack();
 	}
 
-	@Deprecated
-	void startProgressBar() {
-		this.progressBar.setIndeterminate(true);
-	}
-
-	@Deprecated
-	void stopProgressBar() {
-		this.progressBar.setIndeterminate(false);
-	}
-
 	private static class BoxScorePanelListCellRender implements ListCellRenderer<Game> {
 
 		@Override
