@@ -24,7 +24,8 @@ public class AppTest extends AbstractSwingFrameTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppTest.class);
 
-	private ReactiveSwingFrame frame;
+	private AppFrame frame;
+	private AppFrameControl control;
 	private ReactiveListModel<Game> model;
 
 	private JFormattedTextField input;
@@ -36,9 +37,8 @@ public class AppTest extends AbstractSwingFrameTest {
 	@Override
 	protected ReactiveSwingFrame createTestableFrame() throws Exception {
 		this.model = new DefaultReactiveListModel<>();
-		final AppFrameControl control = new AppFrameControl(model, new MLBStatsClient());
-
-		this.frame = control.frame();
+		this.frame = new AppFrame(model);
+		this.control = new AppFrameControl(this.frame, this.model, new MLBStatsClient());
 
 		return frame;
 	}

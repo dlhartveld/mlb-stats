@@ -22,7 +22,7 @@ public class StatsApp {
 		model = new DefaultReactiveListModel<>();
 
 		EventQueue.invokeAndWait(() -> {
-			appFrameControl = new AppFrameControl(model, service);
+			appFrameControl = new AppFrameControl(new AppFrame(model), model, service);
 		});
 	}
 

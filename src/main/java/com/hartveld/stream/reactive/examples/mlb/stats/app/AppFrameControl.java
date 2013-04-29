@@ -24,12 +24,13 @@ public class AppFrameControl extends AbstractFrameControl {
 	private final AppFrame appFrame;
 	private final ReactiveListModel<Game> model;
 
-	public AppFrameControl(final ReactiveListModel<Game> model, final MLBStatsClient client) {
+	public AppFrameControl(final AppFrame appFrame, final ReactiveListModel<Game> model, final MLBStatsClient client) {
+		checkNotNull(appFrame, "appFrame");
 		checkNotNull(model, "model");
+		checkNotNull(client, "client");
 
-		this.appFrame = new AppFrame(model);
+		this.appFrame = appFrame;
 		this.model = model;
-
 		this.client = client;
 
 		initControl();
